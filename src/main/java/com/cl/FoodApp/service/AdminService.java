@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.cl.FoodApp.dao.AdminDao;
 import com.cl.FoodApp.dto.Admin;
 import com.cl.FoodApp.exception.IdNotFoundException;
+import com.cl.FoodApp.util.AES;
 import com.cl.FoodApp.util.ResponseStructure;
 
 @Service
@@ -18,7 +19,10 @@ public class AdminService {
 	@Autowired
 	AdminDao dao;
 
+	@Autowired
+	AES aes;
 	public ResponseEntity<ResponseStructure<Admin>> saveAdmin(Admin admin) {
+		admin.setPassword(aes.encrypt(admin.getPassword(), "any"));
 		ResponseStructure<Admin> structure = new ResponseStructure<Admin>();
 		structure.setMessage("Admin saved successfully");
 		structure.setStatus(HttpStatus.CREATED.value());

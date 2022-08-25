@@ -15,6 +15,7 @@ import com.cl.FoodApp.dto.BranchManager;
 import com.cl.FoodApp.dto.FoodOrder;
 import com.cl.FoodApp.dto.Staff;
 import com.cl.FoodApp.exception.IdNotFoundException;
+import com.cl.FoodApp.util.AES;
 import com.cl.FoodApp.util.ResponseStructure;
 
 @Service
@@ -25,14 +26,13 @@ public class StaffService {
 	@Autowired
 	FoodOrderDao dao1;
 	
+	@Autowired 
+	AES aes;
+	
 	@Autowired
 	BranchManagerDao managerDao;
 	public ResponseEntity<ResponseStructure<Staff>> saveStaff(Staff staff, int id) {
-//		List<FoodOrder> order = dao1.findAllFoodOrder();
-//		for(FoodOrder orders:order) {
-//			FoodOrder order1 = orders;
-//			order1.setStaff(staff);
-//		}
+		staff.setPassword(aes.encrypt(staff.getPassword(), "any"));
 		staff.setManager(managerDao.branchManagerById(id).get());
 		ResponseStructure<Staff> structure = new ResponseStructure<Staff>();
 		structure.setMessage("Staff saved successfully");

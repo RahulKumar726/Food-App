@@ -12,6 +12,7 @@ import com.cl.FoodApp.dao.AdminDao;
 import com.cl.FoodApp.dao.BranchManagerDao;
 import com.cl.FoodApp.dto.BranchManager;
 import com.cl.FoodApp.exception.IdNotFoundException;
+import com.cl.FoodApp.util.AES;
 import com.cl.FoodApp.util.ResponseStructure;
 
 @Service
@@ -21,7 +22,12 @@ public class BranchManagerService {
 	
 	@Autowired
 	AdminDao adminDao;
+	
+	@Autowired 
+	AES aes;
+	
 	public ResponseEntity<ResponseStructure<BranchManager>> saveBranchManager(BranchManager manager, int id) {
+		manager.setPassword(aes.encrypt(manager.getPassword(), "any"));
 		manager.setAdmin(adminDao.adminById(id).get());
 		ResponseStructure<BranchManager> structure = new ResponseStructure<BranchManager>();
 		structure.setMessage("Branch manager saved successfully");

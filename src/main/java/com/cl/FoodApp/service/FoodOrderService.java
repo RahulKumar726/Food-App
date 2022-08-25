@@ -14,7 +14,6 @@ import com.cl.FoodApp.dao.ItemDao;
 import com.cl.FoodApp.dao.StaffDao;
 import com.cl.FoodApp.dto.FoodOrder;
 import com.cl.FoodApp.dto.Item;
-import com.cl.FoodApp.dto.Staff;
 import com.cl.FoodApp.exception.IdNotFoundException;
 import com.cl.FoodApp.util.ResponseStructure;
 
@@ -28,14 +27,20 @@ public class FoodOrderService {
 	@Autowired
 	ItemDao itemDao;
 	
-	public ResponseEntity<ResponseStructure<FoodOrder>> saveFoodOrder(FoodOrder food, int id, List<Integer> itemId) {		
+	public ResponseEntity<ResponseStructure<FoodOrder>> saveFoodOrder(FoodOrder food, int id, List<Integer> itemId)  {	
+		long total = 0;
 		food.setStaff(dao1.staffById(id).get());
 		List<Item> items = new ArrayList<Item>();
 		for(int i = 0; i < itemId.size(); i++) {
 			Item o = itemDao.itemById(itemId.get(i)).get();
 			items.add(o);
+			total = total + (o.getPrice()*o.getQuantity());
 		}
+		total = total + (18/100)*total;
+		food.setTotalprice(total);
 		food.setItem(items);
+		
+		
 		ResponseStructure<FoodOrder> structure = new ResponseStructure<FoodOrder>();
 		structure.setMessage("FoodOrder saved successfully");
 		structure.setStatus(HttpStatus.CREATED.value());

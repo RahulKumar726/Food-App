@@ -20,7 +20,7 @@ public class FoodOrder {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private String status;
-	private int totalprice;
+	private long totalprice;
 	private String orderCreationTime;                        
 	private String orderDeliveryTime;
 	private String customerName;
@@ -60,10 +60,10 @@ public class FoodOrder {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	public int getTotalprice() {
+	public long getTotalprice() {
 		return totalprice;
 	}
-	public void setTotalprice(int totalprice) {
+	public void setTotalprice(long totalprice) {
 		this.totalprice = totalprice;
 	}
 	public String getOrderCreationTime() {

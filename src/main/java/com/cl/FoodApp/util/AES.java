@@ -6,8 +6,12 @@ import java.util.Arrays;
 import java.util.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+
+import org.springframework.context.annotation.Configuration;
+
 import java.io.UnsupportedEncodingException;
 
+@Configuration
 public class AES {
 	private static SecretKeySpec secretKey;
 	private static byte[] key;
