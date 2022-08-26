@@ -31,7 +31,9 @@ public class AdminService {
 	}
 
 	public ResponseEntity<ResponseStructure<Admin>> updateAdmin(Admin admin, int id) {
+		admin.setPassword(aes.encrypt(admin.getPassword(), "any"));
 		Admin admin1 = dao.updateAdmin(admin, id);
+		
 		ResponseStructure<Admin> structure = new ResponseStructure<Admin>();
 		if (admin1 != null) {
 			structure.setMessage("Updated Sucessfully");
@@ -64,7 +66,7 @@ public class AdminService {
 			structure.setMessage("Admin Found Sucessfully");
 			structure.setStatus(HttpStatus.OK.value());
 			structure.setT(optional.get());
-			return new ResponseEntity<ResponseStructure<Admin>>(structure, HttpStatus.CREATED);
+			return new ResponseEntity<ResponseStructure<Admin>>(structure, HttpStatus.OK);
 		}
 	}
 
@@ -76,4 +78,32 @@ public class AdminService {
 		return new ResponseEntity<ResponseStructure<List<Admin>>>(structure, HttpStatus.OK);
 
 	}
+	
+	public ResponseEntity<ResponseStructure<Admin>> getAdminByEmail(String email, String password) {
+		Admin admin = dao.findAdminByEmail(email);
+		ResponseStructure<Admin> structure = new ResponseStructure<Admin>();
+		if (admin != null) {
+			String pswd = aes.decrypt(admin.getPassword(), "any");
+			if(pswd.equals(password)) {
+				structure.setMessage("Found Sucessfully");
+				structure.setStatus(HttpStatus.OK.value());
+				structure.setT(admin);
+				return new ResponseEntity<ResponseStructure<Admin>>(structure, HttpStatus.OK);
+			}
+			else {
+				structure.setMessage("Invalid Password");
+				structure.setStatus(HttpStatus.UNAUTHORIZED.value());
+				structure.setT(null);
+				return new ResponseEntity<ResponseStructure<Admin>>(structure, HttpStatus.UNAUTHORIZED);
+			}
+		} else {
+			structure.setMessage("Invalid ID");
+			structure.setStatus(HttpStatus.NOT_FOUND.value());
+			structure.setT(null);
+			return new ResponseEntity<ResponseStructure<Admin>>(structure, HttpStatus.NOT_FOUND);
+		}
+		
+
+	}
 }
+

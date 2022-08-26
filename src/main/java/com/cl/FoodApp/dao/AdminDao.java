@@ -8,11 +8,15 @@ import org.springframework.stereotype.Repository;
 
 import com.cl.FoodApp.dto.Admin;
 import com.cl.FoodApp.repository.AdminRepository;
+import com.cl.FoodApp.util.AES;
 
 @Repository
 public class AdminDao {
 	@Autowired
 	private AdminRepository repository;
+	
+	@Autowired
+	AES aes;
 	
 	public Admin saveAdmin(Admin admin) {
 		return repository.save(admin);
@@ -41,4 +45,10 @@ public class AdminDao {
 	public List<Admin> findAllAdmin(){
 		return repository.findAll();
 	}
+	
+	public Admin findAdminByEmail(String email) {
+		return repository.findByEmail(email);
+		
+	}
+	
 }

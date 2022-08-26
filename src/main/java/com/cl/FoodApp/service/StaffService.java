@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 import com.cl.FoodApp.dao.BranchManagerDao;
 import com.cl.FoodApp.dao.FoodOrderDao;
 import com.cl.FoodApp.dao.StaffDao;
-import com.cl.FoodApp.dto.BranchManager;
-import com.cl.FoodApp.dto.FoodOrder;
 import com.cl.FoodApp.dto.Staff;
 import com.cl.FoodApp.exception.IdNotFoundException;
 import com.cl.FoodApp.util.AES;
@@ -42,6 +40,7 @@ public class StaffService {
 	}
 
 	public ResponseEntity<ResponseStructure<Staff>> updateStaff(Staff staff, int id) {
+		staff.setPassword(aes.encrypt(staff.getPassword(), "any"));
 		Staff staff1 = dao.updateStaff(staff, id);
 		ResponseStructure<Staff> structure = new ResponseStructure<Staff>();
 		if (staff1 != null) {
@@ -85,6 +84,33 @@ public class StaffService {
 		structure.setStatus(HttpStatus.OK.value());
 		structure.setT(dao.findAllStaff());
 		return new ResponseEntity<ResponseStructure<List<Staff>>>(structure, HttpStatus.OK);
+
+	}
+	
+	public ResponseEntity<ResponseStructure<Staff>> getStaffByEmail(String email, String password) {
+		Staff staff = dao.findStaffByEmail(email);
+		ResponseStructure<Staff> structure = new ResponseStructure<Staff>();
+		if (staff != null) {
+			String pswd = aes.decrypt(staff.getPassword(), "any");
+			if(pswd.equals(password)) {
+				structure.setMessage("Found Sucessfully");
+				structure.setStatus(HttpStatus.OK.value());
+				structure.setT(staff);
+				return new ResponseEntity<ResponseStructure<Staff>>(structure, HttpStatus.OK);
+			}
+			else {
+				structure.setMessage("Invalid Password");
+				structure.setStatus(HttpStatus.UNAUTHORIZED.value());
+				structure.setT(null);
+				return new ResponseEntity<ResponseStructure<Staff>>(structure, HttpStatus.UNAUTHORIZED);
+			}
+		} else {
+			structure.setMessage("Invalid ID");
+			structure.setStatus(HttpStatus.NOT_FOUND.value());
+			structure.setT(null);
+			return new ResponseEntity<ResponseStructure<Staff>>(structure, HttpStatus.NOT_FOUND);
+		}
+		
 
 	}
 }

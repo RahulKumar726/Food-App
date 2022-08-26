@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.cl.FoodApp.dao.AdminDao;
 import com.cl.FoodApp.dao.BranchManagerDao;
+import com.cl.FoodApp.dto.Admin;
 import com.cl.FoodApp.dto.BranchManager;
 import com.cl.FoodApp.exception.IdNotFoundException;
 import com.cl.FoodApp.util.AES;
@@ -37,6 +38,7 @@ public class BranchManagerService {
 	}
 
 	public ResponseEntity<ResponseStructure<BranchManager>> updateBranchManager(BranchManager manager, int id) {
+		manager.setPassword(aes.encrypt(manager.getPassword(), "any"));
 		BranchManager manager1 = dao.updateBranchManager(manager, id);
 		ResponseStructure<BranchManager> structure = new ResponseStructure<BranchManager>();
 		if (manager1 != null) {
@@ -80,6 +82,33 @@ public class BranchManagerService {
 		structure.setStatus(HttpStatus.OK.value());
 		structure.setT(dao.findAllBranchManager());
 		return new ResponseEntity<ResponseStructure<List<BranchManager>>>(structure, HttpStatus.OK);
+
+	}
+	
+	public ResponseEntity<ResponseStructure<BranchManager>> getManagerByEmail(String email, String password) {
+		BranchManager manager = dao.findManagerByEmail(email);
+		ResponseStructure<BranchManager> structure = new ResponseStructure<BranchManager>();
+		if (manager != null) {
+			String pswd = aes.decrypt(manager.getPassword(), "any");
+			if(pswd.equals(password)) {
+				structure.setMessage("Found Sucessfully");
+				structure.setStatus(HttpStatus.OK.value());
+				structure.setT(manager);
+				return new ResponseEntity<ResponseStructure<BranchManager>>(structure, HttpStatus.OK);
+			}
+			else {
+				structure.setMessage("Invalid Password");
+				structure.setStatus(HttpStatus.UNAUTHORIZED.value());
+				structure.setT(null);
+				return new ResponseEntity<ResponseStructure<BranchManager>>(structure, HttpStatus.UNAUTHORIZED);
+			}
+		} else {
+			structure.setMessage("Invalid ID");
+			structure.setStatus(HttpStatus.NOT_FOUND.value());
+			structure.setT(null);
+			return new ResponseEntity<ResponseStructure<BranchManager>>(structure, HttpStatus.NOT_FOUND);
+		}
+		
 
 	}
 }

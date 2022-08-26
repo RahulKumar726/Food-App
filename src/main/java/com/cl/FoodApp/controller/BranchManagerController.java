@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,11 +14,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cl.FoodApp.dto.Admin;
 import com.cl.FoodApp.dto.BranchManager;
 import com.cl.FoodApp.service.BranchManagerService;
 import com.cl.FoodApp.util.ResponseStructure;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 public class BranchManagerController {
 	@Autowired 
 	BranchManagerService service;
@@ -25,6 +28,11 @@ public class BranchManagerController {
 	@PostMapping("/savemanager/{id}")
 	public ResponseEntity<ResponseStructure<BranchManager>> saveBranchManager(@RequestBody BranchManager manager, @PathVariable int id) {
 		return service.saveBranchManager(manager,id);
+	}
+	
+	@GetMapping("/loginmanager")
+	public ResponseEntity<ResponseStructure<BranchManager>> getManagerByEmail(@RequestParam String email, @RequestParam String password) {
+		return service.getManagerByEmail(email, password);
 	}
 	
 	@DeleteMapping("/deletemanager")

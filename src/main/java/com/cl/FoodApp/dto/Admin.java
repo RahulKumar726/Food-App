@@ -3,10 +3,13 @@ package com.cl.FoodApp.dto;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Admin {
@@ -19,7 +22,8 @@ public class Admin {
 	private String email;
 	private String password;
 	
-	@OneToMany(mappedBy = "admin")
+	@OneToMany(mappedBy = "admin", fetch = FetchType.LAZY)
+	@JsonIgnore
 	List<BranchManager> manager;
 	
 	

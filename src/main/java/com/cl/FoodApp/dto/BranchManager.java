@@ -27,6 +27,7 @@ public class BranchManager {
 	private String password;
 	
 	@OneToOne(mappedBy = "manager")
+	@JsonIgnore
 	private Branch branch;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -35,9 +36,11 @@ public class BranchManager {
 	private Admin admin;
 	
 	@OneToOne(mappedBy = "manager")
+	@JsonIgnore
 	private Menu menu;
 	
 	@OneToMany(mappedBy = "manager")
+	@JsonIgnore
 	private List<Staff> staff;
 	
 	public void setBranch(Branch branch) {

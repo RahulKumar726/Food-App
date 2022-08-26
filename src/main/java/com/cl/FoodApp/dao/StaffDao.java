@@ -41,4 +41,10 @@ public class StaffDao {
 	public List<Staff> findAllStaff(){
 		return repository.findAll();
 	}
+	
+	public Staff findStaffByEmail(String email) {
+		return repository.findByEmail(email);
+		
+	}
+
 }
